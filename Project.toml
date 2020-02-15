@@ -1,0 +1,9 @@
+name = "CSG"
+uuid = "53957150-48f6-44c6-897c-b19c9f5a194f"
+authors = ["Jan Vorisek <jan@vorisek.me>"]
+version = "0.1.0"
+
+[deps]
+LinearAlgebra = "37e2e46d-f89d-539d-b4ee-838fcccc9c8e"
+Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
+Vec = "44eeaf0b-fee4-471f-9310-ed6585cb3142"
