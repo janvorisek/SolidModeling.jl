@@ -41,7 +41,30 @@ function toPolygons(model)
     return list;
 end
 
-function union(first, second)
+"""
+    union(first::Solid, second::Solid)
+
+Return new solid after union of `A` and `B`.
+
+    +-------+            +-------+
+    |       |            |       |
+    |   A   |            |       |
+    |    +--+----+   =   |       +----+
+    +----+--+    |       +----+       |
+         |   B   |            |       |
+         |       |            |       |
+         +-------+            +-------+
+
+# Examples
+```julia
+c1 = cube(0.5, 0.5, 0.5, 1.0, 1.0, 1.0)
+c2 = cube(0.5, 0.5, 0.5, 2.0, 2.0, 2.0)
+r = CSG.union(c1, c2) # union of solids c1 and c2
+
+v = volume(r) # volume of union c1 c2
+```
+"""
+function union(first::Solid, second::Solid)
     a = Node(nothing, nothing, nothing, Array{Polygon,1}())
     b = Node(nothing, nothing, nothing, Array{Polygon,1}())
 
@@ -58,7 +81,30 @@ function union(first, second)
     return fromPolygons(allPolygons(a))
 end
 
-function subtract(first, second)
+"""
+    subtract(first::Solid, second::Solid)
+
+Return new solid after performing `B`-`A`.
+
+    +-------+            +-------+
+    |       |            |       |
+    |   A   |            |       |
+    |    +--+----+   =   |    +--+
+    +----+--+    |       +----+
+         |   B   |
+         |       |
+         +-------+
+
+# Examples
+```julia
+c1 = cube(0.5, 0.5, 0.5, 1.0, 1.0, 1.0)
+c2 = cube(0.5, 0.5, 0.5, 2.0, 2.0, 2.0)
+r = CSG.subtract(c1, c2) # subtraction of c2 from c1
+
+v = volume(r) # volume of c1-c2
+```
+"""
+function subtract(first::Solid, second::Solid)
     a = Node(nothing, nothing, nothing, Array{Polygon,1}())
     b = Node(nothing, nothing, nothing, Array{Polygon,1}())
 
@@ -76,7 +122,30 @@ function subtract(first, second)
     return fromPolygons(allPolygons(a))
 end
 
-function intersect(first, second)
+"""
+intersect(first::Solid, second::Solid)
+
+Return new solid after computing intersection of `A` and `B`.
+
+    +-------+
+    |       |
+    |   A   |
+    |    +--+----+   =   +--+
+    +----+--+    |       +--+
+         |   B   |
+         |       |
+         +-------+
+
+# Examples
+```julia
+c1 = cube(0.5, 0.5, 0.5, 1.0, 1.0, 1.0)
+c2 = cube(0.5, 0.5, 0.5, 2.0, 2.0, 2.0)
+r = CSG.intersect(c1, c2) # intersection of c1 and c2
+
+v = volume(r)
+```
+"""
+function intersect(first::Solid, second::Solid)
     a = Node(nothing, nothing, nothing, Array{Polygon,1}())
     b = Node(nothing, nothing, nothing, Array{Polygon,1}())
 
@@ -151,8 +220,6 @@ function splitPolygon(plane, polygon, coplanarFront, coplanarBack, front, back)
         if (length(b) >= 3) push!(back, Polygon(b, fromPoints(b[1].pos, b[2].pos, b[3].pos))) end
     end
 end
-
-
 
 function invert(node::Node)
     for poly in node.polygons
@@ -237,6 +304,27 @@ function build(node::Node, polygons)
     end
 end
 
+function cube(center::Vector{Float64}, lx::Float64, ly::Float64, lz::Float64)::Solid
+    return cube(center[1] - lx / 2, center[2] - ly / 2, center[3] - lz / 2, center[1] + lx / 2, center[2] + ly / 2, center[3] + lz / 2)
+end
+
+"""
+    cube(xMin::Float64, yMin::Float64, zMin::Float64, xMax::Float64, yMax::Float64, zMax::Float64)::Solid
+    cube(center::Vector{Float64}, lx::Float64, ly::Float64, lz::Float64)::Solid
+
+Creates a cube by specifying its bounding box `xMin`, `yMin`, `zMin` and `xMax`, `yMax`, `zMax`.
+
+Or create a cube using a center point located in `center` and dimensions `lx`, `ly`, and `lz`.
+
+# Examples
+```julia-repl
+julia> cube(0, 0, 0, 1, 1, 1)
+Main.CSG.Solid(...)
+
+julia> cube([0.5, 0.5, 0.5], 1, 1, 1)
+Main.CSG.Solid(...)
+```
+"""
 function cube(xMin::Float64, yMin::Float64, zMin::Float64, xMax::Float64, yMax::Float64, zMax::Float64)::Solid
     v1 = Vertex(VecE3(xMin, yMin, zMax))
     v2 = Vertex(VecE3(xMin, yMax, zMax))
@@ -270,6 +358,17 @@ function signedVolumeOfTriangle(p1::VecE3, p2::VecE3, p3::VecE3)
    	return (1.0 / 6.0) * (-v321 + v231 + v312 - v132 - v213 + v123)
 end
 
+"""
+    volume(c::Solid)::Float64
+
+Return the volume of **Solid** `c`.
+
+# Examples
+```julia-repl
+julia> volume(cube(0.0, 0.0, 0.0, 1.0, 1.0, 1.0))
+0.9999999999999999
+```
+"""
 function volume(c::Solid)::Float64
     volume = 0.0;
 
