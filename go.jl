@@ -1,6 +1,6 @@
 using Pkg;
 Pkg.activate(".");
 Pkg.instantiate();
-using CSG;
+using SolidModeling;
 
 Pkg.test();

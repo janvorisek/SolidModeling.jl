@@ -1,5 +1,5 @@
-name = "CSG"
-uuid = "53957150-48f6-44c6-897c-b19c9f5a194f"
+name = "SolidModeling"
+uuid = "87eb8544-cf78-4b0d-97e3-b7004341d5e9"
 authors = ["Jan Vorisek <jan@vorisek.me>"]
 version = "0.1.0"
 

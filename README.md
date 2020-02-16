@@ -1,6 +1,6 @@
-# CSG.jl
+# SolidModeling.jl
 
-**Constructive Solid Geometry (CSG)** is a modeling technique that uses boolean operations like union and intersection to combine 3D solids. This library implements CSG operations on using BSP trees.
+**Constructive Solid Geometry (CSG)** is a solid modeling technique that uses boolean operations like union and intersection to combine 3D solids. This library implements CSG operations on using BSP trees.
 
 It's ported from the excellent javascript library [csg.js](https://evanw.github.io/csg.js/docs/) with some added features (like volume calculation).
 
@@ -9,13 +9,13 @@ It's ported from the excellent javascript library [csg.js](https://evanw.github.
 You can install this package using the following Julia command:
 
 ```julia
-Pkg.add("CSG")
+Pkg.add("SolidModeling")
 ```
 
 The package can then be loaded and used in a Julia script or a Jupyter Notebook by:
 
 ```julia
-using CSG
+using SolidModeling
 ```
 
 ## Usage
@@ -32,7 +32,7 @@ c1 = cube(0.0, 0.0, 0.0, 1.0, 1.0, 1.0)
 c2 = cube(0.5, 0.5, 0.5, 2.0, 2.0, 2.0)
 
 # calculate union of the two cubes
-c = CSG.union(c1, c2)
+c = bunion(c1, c2)
 
 # calculate volume of the union if needed
 vol = volume(c) 
@@ -42,7 +42,7 @@ vol = volume(c)
 
 ```julia
 # calculate intersection of the two cubes from above
-c = CSG.intersect(c1, c2)
+c = bintersect(c1, c2)
 
 # calculate volume of the union if needed
 vol = volume(c) 
@@ -52,7 +52,7 @@ vol = volume(c)
 
 ```julia
 # calculate subtraction of the two cubes from above (c1-c2)
-c = CSG.subtract(c1, c2)
+c = bsubtract(c1, c2)
 
 # calculate volume of the union if needed
 vol = volume(c) 

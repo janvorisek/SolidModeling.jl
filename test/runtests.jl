@@ -1,11 +1,11 @@
-using CSG;
+using SolidModeling;
 using Test;
 
 # Test union of two cubes
 function cubeUnion()
     c1 = cube(0.0, 0.0, 0.0, 1.0, 1.0, 1.0);
     c2 = cube(0.5, 0.5, 0.5, 2.0, 2.0, 2.0);
-    c = CSG.union(c1, c2);
+    c = bunion(c1, c2);
 
     return volume(c)
 end
@@ -13,7 +13,7 @@ end
 function cubeUnionReversed()
     c1 = cube(0.0, 0.0, 0.0, 1.0, 1.0, 1.0);
     c2 = cube(0.5, 0.5, 0.5, 2.0, 2.0, 2.0);
-    c = CSG.union(c2, c1);
+    c = bunion(c2, c1);
 
     return volume(c)
 end
@@ -22,7 +22,7 @@ end
 function cubeSubtract()
     c1 = cube([0.5, 0.5, 0.5], 1.0, 1.0, 1.0)
     c2 = cube(0.5, 0.5, 0.5, 2.0, 2.0, 2.0)
-    r = CSG.subtract(c1, c2)
+    r = bsubtract(c1, c2)
 
     v = volume(r)
 
@@ -34,11 +34,10 @@ function cubeIntersect()
     c1 = cube(0.0, 0.0, 0.0, 1.0, 1.0, 1.0)
     c2 = cube(0.5, 0.5, 0.5, 2.0, 2.0, 2.0)
 
-    v = volume(CSG.intersect(c1, c2))
+    v = volume(bintersect(c1, c2))
 
     return v
 end
-
 
 @testset begin
     @test isapprox(cubeUnion(), 4.25)                   # Test against known volume

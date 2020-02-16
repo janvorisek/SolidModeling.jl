@@ -1,4 +1,4 @@
-module CSG
+module SolidModeling
 
 using LinearAlgebra
 
@@ -41,7 +41,7 @@ function toPolygons(model)
 end
 
 """
-    union(first::Solid, second::Solid)
+    bunion(first::Solid, second::Solid)
 
 Return new solid after union of `A` and `B`.
 
@@ -58,12 +58,12 @@ Return new solid after union of `A` and `B`.
 ```julia
 c1 = cube(0.5, 0.5, 0.5, 1.0, 1.0, 1.0)
 c2 = cube(0.5, 0.5, 0.5, 2.0, 2.0, 2.0)
-r = CSG.union(c1, c2) # union of solids c1 and c2
+r = bunion(c1, c2) # union of solids c1 and c2
 
 v = volume(r) # volume of union c1 c2
 ```
 """
-function union(first::Solid, second::Solid)
+function bunion(first::Solid, second::Solid)
     a = Node(nothing, nothing, nothing, Array{Polygon,1}())
     b = Node(nothing, nothing, nothing, Array{Polygon,1}())
 
@@ -81,7 +81,7 @@ function union(first::Solid, second::Solid)
 end
 
 """
-    subtract(first::Solid, second::Solid)
+    bsubtract(first::Solid, second::Solid)
 
 Return new solid after performing `B`-`A`.
 
@@ -98,12 +98,12 @@ Return new solid after performing `B`-`A`.
 ```julia
 c1 = cube(0.5, 0.5, 0.5, 1.0, 1.0, 1.0)
 c2 = cube(0.5, 0.5, 0.5, 2.0, 2.0, 2.0)
-r = CSG.subtract(c1, c2) # subtraction of c2 from c1
+r = bsubtract(c1, c2) # subtraction of c2 from c1
 
 v = volume(r) # volume of c1-c2
 ```
 """
-function subtract(first::Solid, second::Solid)
+function bsubtract(first::Solid, second::Solid)
     a = Node(nothing, nothing, nothing, Array{Polygon,1}())
     b = Node(nothing, nothing, nothing, Array{Polygon,1}())
 
@@ -122,7 +122,7 @@ function subtract(first::Solid, second::Solid)
 end
 
 """
-intersect(first::Solid, second::Solid)
+bintersect(first::Solid, second::Solid)
 
 Return new solid after computing intersection of `A` and `B`.
 
@@ -139,12 +139,12 @@ Return new solid after computing intersection of `A` and `B`.
 ```julia
 c1 = cube(0.5, 0.5, 0.5, 1.0, 1.0, 1.0)
 c2 = cube(0.5, 0.5, 0.5, 2.0, 2.0, 2.0)
-r = CSG.intersect(c1, c2) # intersection of c1 and c2
+r = bintersect(c1, c2) # intersection of c1 and c2
 
 v = volume(r)
 ```
 """
-function intersect(first::Solid, second::Solid)
+function bintersect(first::Solid, second::Solid)
     a = Node(nothing, nothing, nothing, Array{Polygon,1}())
     b = Node(nothing, nothing, nothing, Array{Polygon,1}())
 
@@ -318,10 +318,10 @@ Or create a cube using a center point located in `center` and dimensions `lx`, `
 # Examples
 ```julia-repl
 julia> cube(0, 0, 0, 1, 1, 1)
-Main.CSG.Solid(...)
+Main.SolidModeling.Solid(...)
 
 julia> cube([0.5, 0.5, 0.5], 1, 1, 1)
-Main.CSG.Solid(...)
+Main.SolidModeling.Solid(...)
 ```
 """
 function cube(xMin::Float64, yMin::Float64, zMin::Float64, xMax::Float64, yMax::Float64, zMax::Float64)::Solid
@@ -380,9 +380,9 @@ function volume(c::Solid)::Float64
 end
 
 export cube;
-export union;
-export subtract;
-export intersect;
+export bunion;
+export bsubtract;
+export bintersect;
 export volume;
 
 end # module
