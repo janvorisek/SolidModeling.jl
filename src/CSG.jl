@@ -3,7 +3,7 @@ module CSG
 using Vec
 using LinearAlgebra
 
-const PlaneEpsilon = 1e-5
+const PlaneEpsilon = 1e-8
 
 include("structs.jl")
 
@@ -21,7 +21,7 @@ function fromPolygons(polygons)
             push!(csg.vertices, poly.vertices[j + 1])
             push!(csg.indices, p + 2)
 
-            p += 3
+            p = p+3
         end
     end
     return csg
@@ -34,7 +34,7 @@ function toPolygons(model)
         triangle = Array{Vertex,1}()
         for j = 0:2
             v = model.vertices[model.indices[i + j + 1] + 1]
-            push!(triangle, v);
+            push!(triangle, copy(v));
         end
         push!(list, Polygon(triangle, fromPoints(triangle[1].pos, triangle[2].pos, triangle[3].pos)))
     end
@@ -58,7 +58,40 @@ function union(first, second)
     return fromPolygons(allPolygons(a))
 end
 
+function subtract(first, second)
+    a = Node(nothing, nothing, nothing, Array{Polygon,1}())
+    b = Node(nothing, nothing, nothing, Array{Polygon,1}())
 
+    build(a, toPolygons(first));
+    build(b, toPolygons(second));
+
+    invert(a)
+    clipTo(a, b)
+    clipTo(b, a)
+    invert(b)
+    clipTo(b, a)
+    invert(b)
+    build(a, allPolygons(b))
+    invert(a)
+    return fromPolygons(allPolygons(a))
+end
+
+function intersect(first, second)
+    a = Node(nothing, nothing, nothing, Array{Polygon,1}())
+    b = Node(nothing, nothing, nothing, Array{Polygon,1}())
+
+    build(a, toPolygons(first));
+    build(b, toPolygons(second));
+
+    invert(a)
+    clipTo(b, a)
+    invert(b)
+    clipTo(a, b)
+    clipTo(b, a)
+    build(a, allPolygons(b))
+    invert(a)
+    return fromPolygons(allPolygons(a))
+end
 
 function interpolate(vertex, other, t)
     return Vertex(lerp(vertex.pos, other.pos, t), lerp(vertex.normal, other.normal, t))
@@ -76,6 +109,7 @@ function splitPolygon(plane, polygon, coplanarFront, coplanarBack, front, back)
     BACK = 2
     SPANNING = 3
 
+    # Classify each point as well as the entire polygon into one of the above four classes.
     polygonType = 0
     types = Array{Int64,1}()
 
@@ -103,8 +137,8 @@ function splitPolygon(plane, polygon, coplanarFront, coplanarBack, front, back)
             vi = polygon.vertices[i + 1]
             vj = polygon.vertices[j + 1]
 
-            if ti != BACK push!(f, vi) end
-            if ti != FRONT push!(b, vi) end
+            if ti != BACK push!(f, copy(vi)) end
+            if ti != FRONT push!(b, copy(vi)) end
             if (ti | tj) == SPANNING
                 t = (plane.w - dot(plane.normal, vi.pos)) / dot(plane.normal, vj.pos - vi.pos)
                 v = interpolate(vi, vj, t)
@@ -150,6 +184,7 @@ function clipPolygons(node::Node, polygons::Array{Polygon,1})
     if node.front !== nothing
         front = clipPolygons(node.front, front)
     end
+
     if node.back !== nothing
         back = clipPolygons(node.back, back)
     else
@@ -167,7 +202,7 @@ function clipTo(node::Node, bsp)
 end
 
 function allPolygons(node::Node)
-    polygons = copy(node.polygons)
+    polygons = deepcopy(node.polygons)
 
     if node.front !== nothing polygons = vcat(polygons, allPolygons(node.front)) end
     if node.back !== nothing polygons = vcat(polygons, allPolygons(node.back)) end
@@ -244,6 +279,8 @@ end
 
 export cube;
 export union;
+export subtract;
+export intersect;
 export volume;
 
 end # module
