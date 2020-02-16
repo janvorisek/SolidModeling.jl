@@ -14,13 +14,14 @@ function fromPolygons(polygons)
     for i = 0:(length(polygons) - 1)
         poly = polygons[i + 1]
         for j = 2:(length(poly.vertices) - 1)
-            push!(csg.vertices, poly.vertices[1]);
-            push!(csg.indices, p);
-            push!(csg.vertices, poly.vertices[j]);
-            push!(csg.indices, p + 1);
-            push!(csg.vertices, poly.vertices[j + 1]);
-            push!(csg.indices, p + 2);
-            p += 3;
+            push!(csg.vertices, poly.vertices[1])
+            push!(csg.indices, p)
+            push!(csg.vertices, poly.vertices[j])
+            push!(csg.indices, p + 1)
+            push!(csg.vertices, poly.vertices[j + 1])
+            push!(csg.indices, p + 2)
+
+            p += 3
         end
     end
     return csg
@@ -30,30 +31,31 @@ function toPolygons(model)
     list = Array{Polygon,1}();
     for i = 0:3:(length(model.indices) - 1)
 
-        triangle = Array{Vertex,1}();
+        triangle = Array{Vertex,1}()
         for j = 0:2
-            v = model.vertices[model.indices[i + j + 1] + 1];
+            v = model.vertices[model.indices[i + j + 1] + 1]
             push!(triangle, v);
         end
-        push!(list, Polygon(triangle, fromPoints(triangle[1].pos, triangle[2].pos, triangle[3].pos)));
+        push!(list, Polygon(triangle, fromPoints(triangle[1].pos, triangle[2].pos, triangle[3].pos)))
     end
     return list;
 end
 
 function union(first, second)
-    a = Node(nothing, nothing, nothing, Array{Polygon,1}());
-    b = Node(nothing, nothing, nothing, Array{Polygon,1}());
+    a = Node(nothing, nothing, nothing, Array{Polygon,1}())
+    b = Node(nothing, nothing, nothing, Array{Polygon,1}())
+
     build(a, toPolygons(first));
     build(b, toPolygons(second));
 
-    clipTo(a, b);
-    clipTo(b, a);
-    invert(b);
-    clipTo(b, a);
-    invert(b);
+    clipTo(a, b)
+    clipTo(b, a)
+    invert(b)
+    clipTo(b, a)
+    invert(b)
 
-    build(a, allPolygons(b));
-    return fromPolygons(allPolygons(a));
+    build(a, allPolygons(b))
+    return fromPolygons(allPolygons(a))
 end
 
 
@@ -213,27 +215,28 @@ function cube(xMin::Float64, yMin::Float64, zMin::Float64, xMax::Float64, yMax::
     f5p = Polygon([v3, v4, v8, v7], fromPoints(v3.pos, v4.pos, v8.pos))
     f6p = Polygon([v4, v1, v5, v8], fromPoints(v4.pos, v1.pos, v5.pos))
 
-  		polys = [f1p, f2p, f3p, f4p, f5p, f6p];
+    polys = [f1p, f2p, f3p, f4p, f5p, f6p];
 
-  		return fromPolygons(polys);
+    return fromPolygons(polys);
 end
 
 function signedVolumeOfTriangle(p1::VecE3, p2::VecE3, p3::VecE3)
-   	v321 = p3.x * p2.y * p1.z;
-   	v231 = p2.x * p3.y * p1.z;
-   	v312 = p3.x * p1.y * p2.z;
-   	v132 = p1.x * p3.y * p2.z;
-   	v213 = p2.x * p1.y * p3.z;
-   	v123 = p1.x * p2.y * p3.z;
-   	return (1.0 / 6.0) * (-v321 + v231 + v312 - v132 - v213 + v123);
+   	v321 = p3.x * p2.y * p1.z
+   	v231 = p2.x * p3.y * p1.z
+   	v312 = p3.x * p1.y * p2.z
+   	v132 = p1.x * p3.y * p2.z
+    v213 = p2.x * p1.y * p3.z
+    v123 = p1.x * p2.y * p3.z
+
+   	return (1.0 / 6.0) * (-v321 + v231 + v312 - v132 - v213 + v123)
 end
 
 function volume(c::Solid)::Float64
     volume = 0.0;
 
     for i = 0:3:(length(c.indices) - 1)
-        dv = signedVolumeOfTriangle(c.vertices[i + 1].pos, c.vertices[i + 2].pos, c.vertices[i + 3].pos);
-      		volume += dv
+        dv = signedVolumeOfTriangle(c.vertices[i + 1].pos, c.vertices[i + 2].pos, c.vertices[i + 3].pos)
+        volume += dv
     end
 
     return volume
