@@ -196,9 +196,9 @@ function build(node::Node, polygons)
     end
 end
 
-function cube(xMin, yMin, zMin, xMax, yMax, zMax)
+function cube(xMin::Float64, yMin::Float64, zMin::Float64, xMax::Float64, yMax::Float64, zMax::Float64)::Solid
     v1 = Vertex(VecE3(xMin, yMin, zMax), VecE3(0, 0, 0))
-  		v2 = Vertex(VecE3(xMin, yMax, zMax), VecE3(0, 0, 0))
+    v2 = Vertex(VecE3(xMin, yMax, zMax), VecE3(0, 0, 0))
     v3 = Vertex(VecE3(xMax, yMax, zMax), VecE3(0, 0, 0))
     v4 = Vertex(VecE3(xMax, yMin, zMax), VecE3(0, 0, 0))
     v5 = Vertex(VecE3(xMin, yMin, zMin), VecE3(0, 0, 0))
@@ -218,7 +218,7 @@ function cube(xMin, yMin, zMin, xMax, yMax, zMax)
   		return fromPolygons(polys);
 end
 
-function signedVolumeOfTriangle(p1, p2, p3)
+function signedVolumeOfTriangle(p1::VecE3, p2::VecE3, p3::VecE3)
    	v321 = p3.x * p2.y * p1.z;
    	v231 = p2.x * p3.y * p1.z;
    	v312 = p3.x * p1.y * p2.z;
@@ -228,7 +228,7 @@ function signedVolumeOfTriangle(p1, p2, p3)
    	return (1.0 / 6.0) * (-v321 + v231 + v312 - v132 - v213 + v123);
 end
 
-function volume(c)
+function volume(c::Solid)::Float64
     volume = 0.0;
 
     for i = 0:3:(length(c.indices) - 1)
