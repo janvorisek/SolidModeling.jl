@@ -3,6 +3,8 @@ mutable struct Vertex
     normal::VecE3
 end
 
+Base.copy(s::Vertex) = Vertex(copy(s.pos), copy(s.normal))
+
 mutable struct Plane
     normal::VecE3
     w::Float64
