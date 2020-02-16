@@ -20,7 +20,7 @@ end
 
 # Test subtraction of two cubes
 function cubeSubtract()
-    c1 = cube(0.0, 0.0, 0.0, 1.0, 1.0, 1.0)
+    c1 = cube([0.5, 0.5, 0.5], 1.0, 1.0, 1.0)
     c2 = cube(0.5, 0.5, 0.5, 2.0, 2.0, 2.0)
     r = CSG.subtract(c1, c2)
 
