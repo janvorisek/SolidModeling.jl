@@ -20,7 +20,45 @@ using CSG
 
 ## Usage
 
-to do
+You can perform 3 basic operations on two solids - `intersection`, `subtraction` and `union`.
+
+### Union of two cubes
+
+```julia
+# 1x1x1 cube with center point in [0.5, 0.5, 0.5]
+c1 = cube(0.0, 0.0, 0.0, 1.0, 1.0, 1.0)
+
+# 1.5x1.5x1.5 cube with center point in [1.25, 1.25, 1.25]
+c2 = cube(0.5, 0.5, 0.5, 2.0, 2.0, 2.0)
+
+# calculate union of the two cubes
+c = CSG.union(c1, c2)
+
+# calculate volume of the union if needed
+vol = volume(c) 
+```
+
+### Intersection of two cubes
+
+```julia
+# calculate intersection of the two cubes from above
+c = CSG.intersect(c1, c2)
+
+# calculate volume of the union if needed
+vol = volume(c) 
+```
+
+### Subtraction of two cubes
+
+```julia
+# calculate intersection of the two cubes from above (c1-c2)
+c = CSG.subtract(c1, c2)
+
+# calculate volume of the union if needed
+vol = volume(c) 
+```
+
+To see more about CSG operations, see the [csg.js docs](https://evanw.github.io/csg.js/docs/).
 
 ## Authors
 
