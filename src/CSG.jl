@@ -1,6 +1,5 @@
 module CSG
 
-using Vec
 using LinearAlgebra
 
 const PlaneEpsilon = 1e-8
@@ -163,7 +162,7 @@ function intersect(first::Solid, second::Solid)
 end
 
 function interpolate(vertex, other, t)
-    return Vertex(lerp(vertex.pos, other.pos, t))
+    return Vertex([vertex.pos[1] + (other.pos[1]-vertex.pos[1])*t, vertex.pos[2] + (other.pos[2]-vertex.pos[2])*t, vertex.pos[3] + (other.pos[3]-vertex.pos[3])*t])
 end
 
 function fromPoints(a, b, c)
@@ -326,14 +325,14 @@ Main.CSG.Solid(...)
 ```
 """
 function cube(xMin::Float64, yMin::Float64, zMin::Float64, xMax::Float64, yMax::Float64, zMax::Float64)::Solid
-    v1 = Vertex(VecE3(xMin, yMin, zMax))
-    v2 = Vertex(VecE3(xMin, yMax, zMax))
-    v3 = Vertex(VecE3(xMax, yMax, zMax))
-    v4 = Vertex(VecE3(xMax, yMin, zMax))
-    v5 = Vertex(VecE3(xMin, yMin, zMin))
-    v6 = Vertex(VecE3(xMin, yMax, zMin))
-    v7 = Vertex(VecE3(xMax, yMax, zMin))
-    v8 = Vertex(VecE3(xMax, yMin, zMin))
+    v1 = Vertex([xMin, yMin, zMax])
+    v2 = Vertex([xMin, yMax, zMax])
+    v3 = Vertex([xMax, yMax, zMax])
+    v4 = Vertex([xMax, yMin, zMax])
+    v5 = Vertex([xMin, yMin, zMin])
+    v6 = Vertex([xMin, yMax, zMin])
+    v7 = Vertex([xMax, yMax, zMin])
+    v8 = Vertex([xMax, yMin, zMin])
 
     f1p = Polygon([v1, v4, v3, v2], fromPoints(v1.pos, v4.pos, v3.pos))
     f2p = Polygon([v7, v8, v5, v6], fromPoints(v7.pos, v8.pos, v5.pos))
@@ -347,13 +346,13 @@ function cube(xMin::Float64, yMin::Float64, zMin::Float64, xMax::Float64, yMax::
     return fromPolygons(polys);
 end
 
-function signedVolumeOfTriangle(p1::VecE3, p2::VecE3, p3::VecE3)
-   	v321 = p3.x * p2.y * p1.z
-   	v231 = p2.x * p3.y * p1.z
-   	v312 = p3.x * p1.y * p2.z
-   	v132 = p1.x * p3.y * p2.z
-    v213 = p2.x * p1.y * p3.z
-    v123 = p1.x * p2.y * p3.z
+function signedVolumeOfTriangle(p1::Array{Float64}, p2::Array{Float64}, p3::Array{Float64})
+   	v321 = p3[1] * p2[2] * p1[3]
+   	v231 = p2[1] * p3[2] * p1[3]
+   	v312 = p3[1] * p1[2] * p2[3]
+   	v132 = p1[1] * p3[2] * p2[3]
+    v213 = p2[1] * p1[2] * p3[3]
+    v123 = p1[1] * p2[2] * p3[3]
 
    	return (1.0 / 6.0) * (-v321 + v231 + v312 - v132 - v213 + v123)
 end

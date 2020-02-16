@@ -1,11 +1,11 @@
 mutable struct Vertex
-    pos::VecE3
+    pos::Array{Float64}
 end
 
 Base.copy(s::Vertex) = Vertex(copy(s.pos))
 
 mutable struct Plane
-    normal::VecE3
+    normal::Array{Float64}
     w::Float64
 end
 
