@@ -21,7 +21,7 @@ function fromPolygons(polygons)
             push!(csg.vertices, poly.vertices[j + 1])
             push!(csg.indices, p + 2)
 
-            p = p+3
+            p = p + 3
         end
     end
     return csg
