@@ -51,7 +51,7 @@ vol = volume(c)
 ### Subtraction of two cubes
 
 ```julia
-# calculate intersection of the two cubes from above (c1-c2)
+# calculate subtraction of the two cubes from above (c1-c2)
 c = CSG.subtract(c1, c2)
 
 # calculate volume of the union if needed
