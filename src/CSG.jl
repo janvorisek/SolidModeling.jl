@@ -94,7 +94,7 @@ function intersect(first, second)
 end
 
 function interpolate(vertex, other, t)
-    return Vertex(lerp(vertex.pos, other.pos, t), lerp(vertex.normal, other.normal, t))
+    return Vertex(lerp(vertex.pos, other.pos, t))
 end
 
 function fromPoints(a, b, c)
@@ -238,14 +238,14 @@ function build(node::Node, polygons)
 end
 
 function cube(xMin::Float64, yMin::Float64, zMin::Float64, xMax::Float64, yMax::Float64, zMax::Float64)::Solid
-    v1 = Vertex(VecE3(xMin, yMin, zMax), VecE3(0, 0, 0))
-    v2 = Vertex(VecE3(xMin, yMax, zMax), VecE3(0, 0, 0))
-    v3 = Vertex(VecE3(xMax, yMax, zMax), VecE3(0, 0, 0))
-    v4 = Vertex(VecE3(xMax, yMin, zMax), VecE3(0, 0, 0))
-    v5 = Vertex(VecE3(xMin, yMin, zMin), VecE3(0, 0, 0))
-    v6 = Vertex(VecE3(xMin, yMax, zMin), VecE3(0, 0, 0))
-    v7 = Vertex(VecE3(xMax, yMax, zMin), VecE3(0, 0, 0))
-    v8 = Vertex(VecE3(xMax, yMin, zMin), VecE3(0, 0, 0))
+    v1 = Vertex(VecE3(xMin, yMin, zMax))
+    v2 = Vertex(VecE3(xMin, yMax, zMax))
+    v3 = Vertex(VecE3(xMax, yMax, zMax))
+    v4 = Vertex(VecE3(xMax, yMin, zMax))
+    v5 = Vertex(VecE3(xMin, yMin, zMin))
+    v6 = Vertex(VecE3(xMin, yMax, zMin))
+    v7 = Vertex(VecE3(xMax, yMax, zMin))
+    v8 = Vertex(VecE3(xMax, yMin, zMin))
 
     f1p = Polygon([v1, v4, v3, v2], fromPoints(v1.pos, v4.pos, v3.pos))
     f2p = Polygon([v7, v8, v5, v6], fromPoints(v7.pos, v8.pos, v5.pos))

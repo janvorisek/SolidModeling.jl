@@ -1,9 +1,8 @@
 mutable struct Vertex
     pos::VecE3
-    normal::VecE3
 end
 
-Base.copy(s::Vertex) = Vertex(copy(s.pos), copy(s.normal))
+Base.copy(s::Vertex) = Vertex(copy(s.pos))
 
 mutable struct Plane
     normal::VecE3
