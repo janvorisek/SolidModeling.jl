@@ -155,7 +155,11 @@ end
 
 
 function invert(node::Node)
-    reverse!(node.polygons);
+    for poly in node.polygons
+        reverse!(poly.vertices)
+        poly.plane.normal = -1 * poly.plane.normal
+        poly.plane.w = -1 * poly.plane.w
+    end
 
     if node.plane !== nothing
         node.plane.normal = -1 * node.plane.normal
