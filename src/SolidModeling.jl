@@ -177,13 +177,14 @@ function splitPolygon(plane::Plane{T}, polygon, coplanarFront, coplanarBack, fro
 
     # Classify each point as well as the entire polygon into one of the above four classes.
     polygonType = 0x00
-    types = Array{Int64,1}()
+    types = Vector{UInt8}(undef, length(polygon.vertices))
 
-    for vertex in polygon.vertices
+    for i in eachindex(polygon.vertices)
+        vertex = polygon.vertices[i]
         t = dot(plane.normal, vertex) - plane.w
         type = (t < -PlaneEpsilon) ? BACK : ((t > PlaneEpsilon) ? FRONT : COPLANAR)
         polygonType |= type
-        push!(types, type)
+        types[i] = type
     end
 
     if polygonType == COPLANAR
@@ -221,11 +222,11 @@ end
 function invert(node::Node)
     for poly in node.polygons
         reverse!(poly.vertices)
-        poly.plane = Plane(-1 .* poly.plane.normal, -1 * poly.plane.w)
+        poly.plane = Plane(-1 .* poly.plane.normal, -1 .* poly.plane.w)
     end
 
     if node.plane !== nothing
-        node.plane = Plane(-1 .* node.plane.normal, -1 * node.plane.w)
+        node.plane = Plane(-1 .* node.plane.normal, -1 .* node.plane.w)
     end
 
     if node.front !== nothing invert(node.front) end
@@ -277,12 +278,13 @@ function allPolygons(node::Node)
 end
 
 function build(node::Node{T}, polygons) where T
-    if length(polygons) === 0 return end
+
+    iszero(length(polygons)) && return
 
     if node.plane === nothing node.plane = deepcopy(polygons[1].plane) end
 
-    front = Array{Polygon,1}()
-    back = Array{Polygon,1}()
+    front = Array{Polygon{T},1}()
+    back = Array{Polygon{T},1}()
 
     for polygon in polygons
         splitPolygon(node.plane, polygon, node.polygons, node.polygons, front, back)
