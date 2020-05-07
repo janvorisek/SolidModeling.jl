@@ -25,17 +25,17 @@ function fromPolygons(polygons::Vector{Polygon{T}}) where T
 end
 
 function toPolygons(model::Solid{T}) where T
-    list = Array{Polygon,1}();
+    list = Array{Polygon,1}()
     for i = 0:3:(length(model.indices) - 1)
 
         triangle = Array{T,1}()
         for j = 0:2
             v = model.vertices[model.indices[i + j + 1] + 1]
-            push!(triangle, copy(v));
+            push!(triangle, copy(v))
         end
         push!(list, Polygon{T}(triangle, fromPoints(triangle[1], triangle[2], triangle[3])))
     end
-    return list;
+    return list
 end
 
 """
@@ -65,8 +65,8 @@ function bunion(first::Solid{T}, second::Solid{T}) where T
     a = Node{T}(nothing, nothing, nothing, Array{Polygon{T},1}())
     b = Node{T}(nothing, nothing, nothing, Array{Polygon{T},1}())
 
-    build(a, toPolygons(first));
-    build(b, toPolygons(second));
+    build(a, toPolygons(first))
+    build(b, toPolygons(second))
 
     clipTo(a, b)
     clipTo(b, a)
@@ -105,8 +105,8 @@ function bsubtract(first::Solid{T}, second::Solid{T}) where T
     a = Node{T}(nothing, nothing, nothing, Array{Polygon{T},1}())
     b = Node{T}(nothing, nothing, nothing, Array{Polygon{T},1}())
 
-    build(a, toPolygons(first));
-    build(b, toPolygons(second));
+    build(a, toPolygons(first))
+    build(b, toPolygons(second))
 
     invert(a)
     clipTo(a, b)
@@ -146,8 +146,8 @@ function bintersect(first::Solid{T}, second::Solid{T}) where T
     a = Node{T}(nothing, nothing, nothing, Array{Polygon{T},1}())
     b = Node{T}(nothing, nothing, nothing, Array{Polygon{T},1}())
 
-    build(a, toPolygons(first));
-    build(b, toPolygons(second));
+    build(a, toPolygons(first))
+    build(b, toPolygons(second))
 
     invert(a)
     clipTo(b, a)
@@ -182,7 +182,13 @@ function splitPolygon(plane::Plane{T}, polygon, coplanarFront, coplanarBack, fro
     for i in eachindex(polygon.vertices)
         vertex = polygon.vertices[i]
         t = dot(plane.normal, vertex) - plane.w
-        type = (t < -PlaneEpsilon) ? BACK : ((t > PlaneEpsilon) ? FRONT : COPLANAR)
+        type = if t < -PlaneEpsilon
+            BACK
+        elseif t > PlaneEpsilon
+            FRONT
+        else
+            COPLANAR
+        end
         polygonType |= type
         types[i] = type
     end
@@ -193,7 +199,7 @@ function splitPolygon(plane::Plane{T}, polygon, coplanarFront, coplanarBack, fro
         push!(front, polygon)
     elseif polygonType == BACK
         push!(back, polygon)
-    elseif polygonType == SPANNING
+    else # SPANNING
         f = Array{T,1}()
         b = Array{T,1}()
 
@@ -207,7 +213,7 @@ function splitPolygon(plane::Plane{T}, polygon, coplanarFront, coplanarBack, fro
             if ti != BACK push!(f, copy(vi)) end
             if ti != FRONT push!(b, copy(vi)) end
             if (ti | tj) == SPANNING
-                t = (plane.w - dot(plane.normal, vi)) / dot(plane.normal, vj - vi)
+                t = (plane.w - dot(plane.normal, vi)) / dot(plane.normal, vj .- vi)
                 v = interpolate(vi, vj, t)
                 push!(f, v)
                 push!(b, v)
@@ -245,7 +251,7 @@ function clipPolygons(node::Node{T}, polygons::Array{Polygon{T},1}) where T
     back = Array{Polygon{T},1}()
 
     for polygon in polygons
-        splitPolygon(node.plane, polygon, front, back, front, back);
+        splitPolygon(node.plane, polygon, front, back, front, back)
     end
 
     if node.front !== nothing
@@ -339,9 +345,9 @@ function cube(xMin::Float64, yMin::Float64, zMin::Float64, xMax::Float64, yMax::
     f5p = Polygon([v3, v4, v8, v7], fromPoints(v3, v4, v8))
     f6p = Polygon([v4, v1, v5, v8], fromPoints(v4, v1, v5))
 
-    polys = [f1p, f2p, f3p, f4p, f5p, f6p];
+    polys = [f1p, f2p, f3p, f4p, f5p, f6p]
 
-    return fromPolygons(polys);
+    return fromPolygons(polys)
 end
 
 function signedVolumeOfTriangle(p1, p2, p3)
@@ -367,7 +373,7 @@ julia> volume(cube(0.0, 0.0, 0.0, 1.0, 1.0, 1.0))
 ```
 """
 function volume(c::Solid)::Float64
-    volume = 0.0;
+    volume = 0.0
 
     for i = 0:3:(length(c.indices) - 1)
         dv = signedVolumeOfTriangle(c.vertices[i + 1], c.vertices[i + 2], c.vertices[i + 3])
@@ -377,10 +383,10 @@ function volume(c::Solid)::Float64
     return volume
 end
 
-export cube;
-export bunion;
-export bsubtract;
-export bintersect;
-export volume;
+export cube
+export bunion
+export bsubtract
+export bintersect
+export volume
 
 end # module
